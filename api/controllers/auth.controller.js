@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
+import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -29,5 +30,37 @@ export const signup = async (req, res, next) => {
     res.json("Signup successful");
   } catch (error) {
     next(error); // 输出mongo的错误信息
+  }
+};
+
+/**1. 判空
+ * 2. 鉴别用户
+ * 3. 生成token
+ * 4. 响应客户端
+ */
+export const signin = async (req, res, next) => {
+  const { email, password } = req.body;
+  // 1. 判空
+  if (!email || !password || email === "" || password === "") {
+    next(errorHandler(400, "All fields are required"));
+  }
+  try {
+    // 2. 鉴别用户
+    const validUser = await User.findOne({ email });
+    if (!validUser) {
+      return next(errorHandler(404, "User not found"));
+    }
+    // 3. 生成token
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+    // 4. 将token发送给客户端
+    const { password: pass, ...rest } = validUser._doc;
+    res
+      .status(200)
+      .cookie("access_token", token, {
+        httpOnly: true, //只能浏览器拿取
+      })
+      .json(rest);
+  } catch (error) {
+    next(error); // mongo返回的错误
   }
 };
