@@ -32,7 +32,6 @@ export default function SignIn() {
       });
 
       const data = await res.json();
-      console.log(data);
       if (data.success === false) {
         dispatch(signInFailure(data.message));
       }
@@ -80,6 +79,7 @@ export default function SignIn() {
                 type="password"
                 placeholder="**********"
                 id="password"
+                autoComplete="off"
                 onChange={handleChange}
               />
             </div>
