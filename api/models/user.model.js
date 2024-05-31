@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    profilePicture: {
+      type: String,
+      default: "https://pic.starrylsi.top/img/2024/05/29/66572ba4ac621.jpg",
+    },
   },
   { timestamps: true }
 );
