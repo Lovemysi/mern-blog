@@ -5,10 +5,17 @@ import react from "@vitejs/plugin-react-swc";
 export default defineConfig({
   plugins: [react()],
   server: {
+    cors: true, //允许跨域
     proxy: {
-      "/api": {
+      "/api1": {
         target: "http://localhost:3000",
         secure: false,
+        changeOrigin: true,
+      },
+      "/api": {
+        target: "https://pic.starrylsi.top",
+        secure: false,
+        changeOrigin: true,
       },
     },
   },

@@ -64,3 +64,24 @@ export const signin = async (req, res, next) => {
     next(error); // mongo返回的错误
   }
 };
+
+/**修改图片的 url和 key */
+export const updateImg = async (req, res, next) => {
+  const { profilePicture, imgKey, email } = req.body;
+  try {
+    User.findOneAndUpdate(
+      { email },
+      {
+        $set: {
+          profilePicture: profilePicture,
+          imgKey: imgKey,
+        },
+      }
+    );
+    res.status(200).json({
+      message: "success",
+    });
+  } catch (error) {
+    next(error);
+  }
+};

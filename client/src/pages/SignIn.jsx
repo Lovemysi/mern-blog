@@ -25,7 +25,7 @@ export default function SignIn() {
     }
     try {
       dispatch(signInStart());
-      const res = await fetch("/api/auth/signin", {
+      const res = await fetch("/api1/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData), // 将javascript对象值转换为json字符串
