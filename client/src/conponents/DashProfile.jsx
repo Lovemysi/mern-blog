@@ -8,9 +8,11 @@ export default function DashProfile() {
   const filePickerRef = useRef();
   const [imageFile, setImageFile] = useState(null);
   const tokenInfo = useRef(null); //访问token, tokenInfo.current.data.token
-  const formData = new FormData();
-  formData.append("file", imageFile);
-  formData.append("strategy_id", 2);
+  const [formData, setFormData] = useState({});
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
   /**监听文件改变 */
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -20,6 +22,9 @@ export default function DashProfile() {
   };
   /**上传图片 */
   const uploadImage = () => {
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("strategy_id", 2);
     const tokenFormData = new FormData();
     tokenFormData.append("email", "430296734@qq.com");
     tokenFormData.append("password", "slxnh14499588");
@@ -64,6 +69,7 @@ export default function DashProfile() {
       })
       .catch((err) => console.log(err));
   };
+
   /**渲染完成后上传 */
   useEffect(() => {
     if (imageFile) {
@@ -71,10 +77,29 @@ export default function DashProfile() {
     }
   }, [imageFile]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (Object.keys(formData).length === 0) {
+      console.log("未改变");
+      return;
+    }
+    try {
+      const res = await fetch(`api1/user/update/${currentUser._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile</h1>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <input
           type="file"
           accept="image/*"
@@ -97,18 +122,21 @@ export default function DashProfile() {
           id="username"
           placeholder="username"
           defaultValue={currentUser.username}
+          onChange={handleChange}
         />
         <TextInput
           type="email"
           id="email"
           placeholder="email"
           defaultValue={currentUser.email}
+          onChange={handleChange}
         />
         <TextInput
           type="password"
           id="password"
           placeholder="password"
           autoComplete="off"
+          onChange={handleChange}
         />
         <Button type="submit" gradientMonochrome="cyan" outline="false">
           Update
