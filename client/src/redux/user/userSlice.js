@@ -26,9 +26,17 @@ const userSlice = createSlice({
     updateImgUrl: (state, action) => {
       state.currentUser.profilePicture = action.payload;
     },
+    deleteUser: (state) => {
+      state.currentUser = null;
+    },
   },
 });
 
-export const { signInStart, signInSuccess, signInFailure, updateImgUrl } =
-  userSlice.actions;
+export const {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+  updateImgUrl,
+  deleteUser,
+} = userSlice.actions;
 export default userSlice.reducer;

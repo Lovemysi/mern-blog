@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Button, TextInput } from "flowbite-react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateImgUrl } from "../redux/user/userSlice";
+import { updateImgUrl, deleteUser } from "../redux/user/userSlice";
 export default function DashProfile() {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -96,7 +96,17 @@ export default function DashProfile() {
       console.log(error);
     }
   };
-  const deleteUser = async () => {};
+  const handleDeleteUser = async () => {
+    try {
+      const res = await fetch(`/api1/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      dispatch(deleteUser());
+      console.log("success");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
@@ -145,7 +155,9 @@ export default function DashProfile() {
         </Button>
       </form>
       <div className="flex justify-between mt-5 text-red-500">
-        <span className="cursor-pointer">Delete Account</span>
+        <span className="cursor-pointer" onClick={handleDeleteUser}>
+          Delete Account
+        </span>
         <span className="cursor-pointer">Sign out</span>
       </div>
     </div>
