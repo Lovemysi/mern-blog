@@ -29,7 +29,7 @@ export const updateUser = async (req, res, next) => {
     if (req.body.username !== req.body.username.toLowerCase()) {
       return next(errorHandler(400, "Username must be lowercase"));
     }
-    if (!req.body.username.match(/^[a-zA-Z0-9]+$/)) {
+    if (!req.body.username.match(/^[a-zA-Z0-9]$/)) {
       return next(
         errorHandler(400, "Username can only contain letters and numbers")
       );
@@ -62,6 +62,18 @@ export const deleteUser = async (req, res, next) => {
   try {
     await User.findByIdAndDelete(req.params.userId);
     res.status(200).json("User has been deleted");
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**退出登录要清除token */
+export const signout = (req, res, next) => {
+  try {
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .json("User has been signed out");
   } catch (error) {
     next(error);
   }
