@@ -1,31 +1,47 @@
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
-import { TextInput, Button, Select } from "flowbite-react";
+import { TextInput, Button, Select, Alert } from "flowbite-react";
 import React, { useState, useEffect } from "react";
 import { Editor, Toolbar } from "@wangeditor/editor-for-react";
-// import { IDomEditor, IEditorConfig, IToolbarConfig } from "@wangeditor/editor";
+import { useNavigate } from "react-router-dom";
+
 export default function CreatePost() {
   // editor 实例
   const [editor, setEditor] = useState(null); // JS 语法
 
   // 编辑器内容
-  const [html, setHtml] = useState("<p>hello</p>");
-
-  // 模拟 ajax 请求，异步设置 html
-  useEffect(() => {
-    setTimeout(() => {
-      setHtml("<p>hello world</p>");
-    }, 1500);
-  }, []);
-
-  // 工具栏配置
-
-  const toolbarConfig = {}; // JS 语法
-
-  // 编辑器配置
-
+  const [html, setHtml] = useState(null);
+  const toolbarConfig = {};
+  const [formData, setFormData] = useState({});
+  const [publishError, setPublishError] = useState(null);
+  const navigate = useNavigate();
   const editorConfig = {
     // JS 语法
     placeholder: "请输入内容...",
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData);
+    try {
+      const res = await fetch("/api1/post/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...formData, content: html }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPublishError(data.message);
+        return;
+      }
+
+      if (res.ok) {
+        setPublishError(null);
+        navigate(`/post/${data.slug}`);
+      }
+    } catch (error) {
+      setPublishError("Something went wrong");
+    }
   };
 
   // 及时销毁 editor ，重要！
@@ -40,7 +56,7 @@ export default function CreatePost() {
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">Create a post</h1>
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <TextInput
             type="text"
@@ -48,8 +64,17 @@ export default function CreatePost() {
             required
             id="title"
             className="flex-1"
+            value={formData.title || ""}
+            onChange={(e) => {
+              setFormData({ ...formData, title: e.target.value });
+            }}
           ></TextInput>
-          <Select>
+          <Select
+            value={formData.category || "uncategorized"}
+            onChange={(e) => {
+              setFormData({ ...formData, category: e.target.value });
+            }}
+          >
             <option value="uncategorized">Select a category</option>
             <option value="javascript">JavaScript</option>
             <option value="reactjs">React.js</option>
@@ -70,7 +95,10 @@ export default function CreatePost() {
               defaultConfig={editorConfig}
               value={html}
               onCreated={setEditor}
-              onChange={(editor) => setHtml(editor.getHtml())}
+              onChange={(editor) => {
+                // setFormData({ ...formData, content: html });
+                setHtml(editor.getHtml());
+              }}
               mode="default"
               style={{ height: "300px", overflowY: "hidden" }}
             />
@@ -79,6 +107,11 @@ export default function CreatePost() {
         <Button type="submit" gradientDuoTone="purpleToPink">
           Publish
         </Button>
+        {publishError && (
+          <Alert className="mt-5 " color="failure">
+            {publishError}
+          </Alert>
+        )}
       </form>
     </div>
   );
