@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Button, TextInput } from "flowbite-react";
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   updateImgUrl,
   deleteUser,
@@ -172,6 +173,17 @@ export default function DashProfile() {
         <Button type="submit" gradientMonochrome="cyan" outline="false">
           Update
         </Button>
+        {currentUser.isAdmin && (
+          <Link to={"/create-post"}>
+            <Button
+              type="submit"
+              gradientDuoTone="purpleToPink"
+              className="w-full"
+            >
+              create a post
+            </Button>
+          </Link>
+        )}
       </form>
       <div className="flex justify-between mt-5 text-red-500">
         <span className="cursor-pointer" onClick={handleDeleteUser}>

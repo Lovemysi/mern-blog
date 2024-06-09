@@ -5,9 +5,11 @@ import SignIn from "./pages/SignIn";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import SignUp from "./pages/SignUp";
+import CreatePost from "./pages/CreatePost";
 import Header from "./conponents/Header";
 import Footer from "./conponents/Footer";
 import PrivateRotue from "./conponents/PrivateRotue";
+import OnlyAdminPrivateRoute from "./conponents/OnlyAdminPrivateRoute";
 
 export default function App() {
   return (
@@ -20,6 +22,9 @@ export default function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route element={<PrivateRotue />}>
           <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+        <Route element={<OnlyAdminPrivateRoute />}>
+          <Route path="/create-post" element={<CreatePost />} />
         </Route>
         <Route path="/projects" element={<Projects />} />
       </Routes>
