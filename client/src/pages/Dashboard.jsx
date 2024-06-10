@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import DashSidebar from "../conponents/DashSidebar";
 import DashProfile from "../conponents/DashProfile";
 import { useLocation } from "react-router-dom";
-
+import DashPosts from "../conponents/DashPosts";
 // 仪表盘用于 操作文章,设置用户
 // 通过 url传递不同参数路由到不同仪表盘
 // 先挂载的后渲染完成
@@ -25,6 +25,8 @@ export default function Dashboard() {
       </div>
       {/**profile */}
       {tab == "profile" && <DashProfile />}
+      {/* POST */}
+      {tab === "posts" && <DashPosts />}
     </div>
   );
 }
